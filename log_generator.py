@@ -90,25 +90,6 @@ def main(argv):
     if (maxLines > totalLines):
         maxLines = totalLines
 
-    print("")
-    print("########################################")
-    print("### log-generator running variables: ###")
-    print("########################################")
-    print("# ")
-    print("# sourceDataFile:   | " + sourceDataFile)
-    print("# sourceData lines: | " + str(totalLines))
-    print("# ")
-    print("# minSleep:         | " + str(minSleep))
-    print("# maxSleep:         | " + str(maxSleep))
-    print("# minLines:         | " + str(minLines))
-    print("# maxLines:         | " + str(maxLines))
-    print("# ")
-    print("# logFile:          | " + logFile)
-    print("# logPattern:       | " + logPattern)
-    print("# datePattern:      | " + datePattern)
-    print("########################################")
-    print("")
-
     # setup logging
     logging.Formatter.converter = time.gmtime
     logger = logging.getLogger("log-generator")
