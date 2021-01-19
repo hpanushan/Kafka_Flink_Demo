@@ -21,14 +21,7 @@ public class FlinkConsumer {
         DataStream<String> stream = env
                 .addSource(new FlinkKafkaConsumer<>("flink_demo", new SimpleStringSchema(), properties));
         
-        stream.map(new MapFunction<String, String>() {
-            private static final long serialVersionUID = -6867736771747690202L;
-
-            @Override
-            public String map(String value) throws Exception {
-                return "Stream Value: " + value;
-            }
-        }).print();
+        stream.print();
 
         env.execute();
     }
