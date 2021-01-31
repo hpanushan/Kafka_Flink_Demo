@@ -1,3 +1,4 @@
 flink/consumer/out
 flink/producer/out
+flink/cep/out
 flink/test_consumer/out
