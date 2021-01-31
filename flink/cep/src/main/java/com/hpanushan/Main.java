@@ -1,5 +1,6 @@
 package com.hpanushan;
 
+import com.hpanushan.sink.SinkToMySQL;
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import javafx.scene.control.Alert;
 import org.apache.flink.api.common.functions.FilterFunction;
@@ -36,13 +37,14 @@ public class Main {
         DataStream<Event> filterd = input.filter(new FilterFunction<Event>() {
             @Override
             public boolean filter(Event event) throws Exception {
-                return (event.getTemperature() > 85) || (event.getCpu() > 85 || (event.getMemory() > 85));
+                return (event.getTemperature() > 95) || (event.getCpu() > 95) || (event.getMemory() > 95);
             }
         });
 
-        // filterd.addSink(new SinkToMySQL()).name("MySQL"); //Data sink to mysql
+        // filterd.print();
 
-        filterd.print();
+        filterd.addSink(new SinkToMySQL()).name("MySQL"); //Data sink to mysql
+
         env.execute("Flink CEP");
 
     }
