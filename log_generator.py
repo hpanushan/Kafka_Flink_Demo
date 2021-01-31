@@ -1,156 +1,63 @@
-#!/usr/bin/env python
-
-#################################
-# log-generator
-#
-# - small python script to generate random time series data into files
-# - https://github.com/bitsofinfo/log-generator
-# - uses GMT time
-#
-#################################
-
-import logging
-import getopt
-import sys
 import time
+import datetime
+import pytz
+import numpy
 import random
-import os
+import sys
+from random import randrange
+from tzlocal import get_localzone
 
-def main(argv):
-    usageInfo = '\nUSAGE:\n\nlogGenerator.py --logFile <targetFile>\n\t[--minSleepMs <int>] [--maxSleepMs <int>] \n\t[--sourceDataFile <fileWithTextData>] [--iterations <long>]\n\t[--minLines <int>] [--maxLines <int>] \n\t[--logPattern <pattern>] [--datePattern <pattern>]'
+local = get_localzone()
+otime = datetime.datetime.now()
+f = sys.stdout
+timestr = time.strftime("%Y%m%d-%H%M%S")
+verb=["CRS1","CRS2","CRS3","CRS4"] # server id 
+logString = ""
+# outFileName = 'access_log_'+timestr+'.log' # create file name
 
-    iterations = -1 # infinate
-    minSleep = 0.1
-    maxSleep = 1
-    minLines = 1
-    maxLines = 1
-    logFile = 'logGenerator.log'
-    sourceDataFile = 'defaultDataFile.txt'
-    sourceData = ''
-    logPattern = '%(asctime)s,%(msecs)d %(process)d %(filename)s %(lineno)d %(name)s %(levelname)s %(message)s'
-    datePattern = "%Y-%m-%d %H:%M:%S"
+outFileName = 'demo.log'
 
-    if len(argv) == 0:
-        print(usageInfo)
-        sys.exit(2)
-
-    try:
-        opts, args = getopt.getopt(argv,"h",["help","logFile=","minSleepMs=","maxSleepMs=","iterations=","sourceDataFile=","minLines=","maxLines="])
-    except:
-        print(usageInfo)
-        sys.exit(2)
+def write_to_log(outFileName,logString): 
+    logfile = open(outFileName,'a+')
+    logfile.write(logString +'\n' )
+    logfile.close()
+    
+    
+    
 
 
-    for opt, arg in opts:
+# f.write('[%s %s] %s  %s  %s \n' % (dt,tz,vrb,cpu,mem))
 
-        if opt in ('-h' , "--help"):
-            print(usageInfo)
-            sys.exit()
+    
 
-        elif opt in ("--logFile"):
-            logFile = arg
 
-        elif opt in ("--minSleepMs"):
-            minSleep = (0.001 * float(arg))
 
-        elif opt in ("--maxSleepMs"):
-            maxSleep = (0.001 * float(arg))
+try:
+    while(True):
+        time.sleep(1.8)
+       
+        
+        vrb = numpy.random.choice(verb,p=[0.2,0.2,0.4,0.2]) # choices for server id 
+        dt = otime.strftime('%d/%b/%Y:%H:%M:%S')
+        tz = datetime.datetime.now(local).strftime('%z')
+        temp = random.randint(50,90) # temprature random value
+        cpu = random.randint(0,100) # cpu usage random value
+        mem = random.randint(0,100) # memory random value
+        f.write('%s %s %s  %s  %s  %s \n' % (dt,tz,vrb,temp,cpu,mem)) #std out put
+        logString= "{} {} {} ".format(temp,cpu,mem) # string format for log file
+        write_to_log(outFileName,logString) # execute log file
+        
+       
+       
 
-        elif opt in ("--maxLines"):
-            maxLines = int(arg)
+except KeyboardInterrupt:
+	
+	exit()     
 
-        elif opt in ("--minLines"):
-            minLines = int(arg)
 
-        elif opt in ("--sourceDataFile"):
-            sourceDataFile = arg
 
-        elif opt in ("--iterations"):
-            iterations = int(arg)
 
-        elif opt in ("--logPattern"):
-            logPattern = arg
 
-        elif opt in ("--datePattern"):
-            datePattern = arg
+        
 
-    #check if sourcefile exists
-    if os.path.exists(sourceDataFile):
-        pass
-    else:
-        print("Please check if file " + sourceDataFile + " exists")
-        sys.exit()
 
-    # bring in source data
-    with open (sourceDataFile, "r") as fh:
-        sourceData=fh.read()
-    sourceData = sourceData.splitlines(True)
-    totalLines = len(sourceData)-1
-
-    if (maxLines > totalLines):
-        maxLines = totalLines
-
-    print("")
-    print("########################################")
-    print("### log-generator running variables: ###")
-    print("########################################")
-    print("# ")
-    print("# sourceDataFile:   | " + sourceDataFile)
-    print("# sourceData lines: | " + str(totalLines))
-    print("# ")
-    print("# minSleep:         | " + str(minSleep))
-    print("# maxSleep:         | " + str(maxSleep))
-    print("# minLines:         | " + str(minLines))
-    print("# maxLines:         | " + str(maxLines))
-    print("# ")
-    print("# logFile:          | " + logFile)
-    print("# logPattern:       | " + logPattern)
-    print("# datePattern:      | " + datePattern)
-    print("########################################")
-    print("")
-
-    # setup logging
-    logging.Formatter.converter = time.gmtime
-    logger = logging.getLogger("log-generator")
-    logger.setLevel(logging.DEBUG)
-    fileHandler = logging.FileHandler(logFile)
-    fileHandler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter(logPattern,datePattern)
-    fileHandler.setFormatter(formatter)
-    logger.addHandler(fileHandler)
-
-    mustIterate = True
-    while (mustIterate):
-
-        # sleep
-        time.sleep(random.uniform(minSleep, maxSleep))
-
-        # get random data
-        lineToStart = random.randint(0,totalLines)
-        linesToGet = random.randint(minLines, maxLines)
-
-        lastLineToGet = (lineToStart + linesToGet)
-
-        if (lastLineToGet > totalLines):
-            lastLineToGet = totalLines
-
-        toLog = ''.join(sourceData[lineToStart:lastLineToGet])
-
-        if (toLog.startswith('\n')):
-            toLog = toLog[1:]
-
-        if (toLog == ''):
-            continue
-
-        logger.debug(toLog[:-1])
-        print(toLog[:-1])
-
-        if (iterations > 0):
-            iterations = iterations - 1
-            if (iterations == 0):
-                mustIterate = False
-
-    sys.exit(0)
-
-if __name__ == "__main__":
-   main(sys.argv[1:])
