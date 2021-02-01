@@ -17,7 +17,7 @@ public class SinkToMySQL extends RichSinkFunction<Event> {
         super.open(parameters);
         connection = getConnection();
 
-        String sql = "insert into events(temperature, cpu, memory) values(?, ?, ?);";
+        String sql = "insert into events(timestamp, timezone, server, temperature, cpu, memory) values(?, ?, ?, ?, ?, ?);";
         ps = this.connection.prepareStatement(sql);
     }
 
@@ -36,9 +36,12 @@ public class SinkToMySQL extends RichSinkFunction<Event> {
     @Override
     public void invoke(Event value, Context context) throws Exception {
         //Assemble data and perform insert operations
-        ps.setInt(1, value.getTemperature());
-        ps.setInt(2, (int) value.getCpu());
-        ps.setInt(3, (int) value.getMemory());
+        ps.setString(1, value.getTimestamp());
+        ps.setString(2, value.getTimezone());
+        ps.setString(3, value.getServer());
+        ps.setInt(4, value.getTemperature());
+        ps.setInt(5, value.getCpu());
+        ps.setInt(6, value.getMemory());
         ps.executeUpdate();
     }
 

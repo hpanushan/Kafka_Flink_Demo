@@ -4,15 +4,45 @@ import java.io.Serializable;
 
 public class Event implements Serializable {
 
+    private String timestamp;
+    private String timezone;
+    private String server;
     private int temperature;
     private int cpu;
     private int memory;
 
-    public Event(int temperature, int cpu, int memory)
+    public Event(String timestamp, String timezone, String server, int temperature, int cpu, int memory)
     {
+        this.timestamp = timestamp;
+        this.timezone = timezone;
+        this.server = server;
         this.temperature = temperature;
         this.cpu = cpu;
         this.memory = memory;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
+    }
+
+    public String getServer() {
+        return server;
+    }
+
+    public void setServer(String server) {
+        this.server = server;
     }
 
     public int getTemperature() {
@@ -23,7 +53,7 @@ public class Event implements Serializable {
         this.temperature = temperature;
     }
 
-    public double getCpu() {
+    public int getCpu() {
         return cpu;
     }
 
@@ -31,7 +61,7 @@ public class Event implements Serializable {
         this.cpu = cpu;
     }
 
-    public long getMemory() {
+    public int getMemory() {
         return memory;
     }
 
@@ -41,6 +71,6 @@ public class Event implements Serializable {
 
     @Override
     public String toString() {
-        return "temperature: " + this.temperature + ", cpu: " + this.cpu + ", memory: " + this.memory;
+        return "timestamp: " + this.timestamp + ", timezone: " + this.timezone + ", server: " + this.server + ", temperature: " + this.temperature + ", cpu: " + this.cpu + ", memory: " + this.memory;
     }
 }

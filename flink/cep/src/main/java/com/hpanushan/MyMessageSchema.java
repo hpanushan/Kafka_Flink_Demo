@@ -15,7 +15,7 @@ class EventDeserializationSchema implements DeserializationSchema<Event> {
         String line = new String(message, StandardCharsets.UTF_8);
         String[] parts = line.split(" ");
 
-        Event event = new Event(Integer.parseInt(parts[0]),Integer.parseInt(parts[1]),Integer.parseInt(parts[2]));
+        Event event = new Event(parts[0],parts[1],parts[2],Integer.parseInt(parts[3]),Integer.parseInt(parts[4]),Integer.parseInt(parts[5]));
 
         return event;
     }
