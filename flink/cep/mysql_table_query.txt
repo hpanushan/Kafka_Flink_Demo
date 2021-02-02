@@ -1,0 +1,10 @@
+CREATE TABLE events(
+    id int not null auto_increment,
+    timestamp varchar(255),
+    timezone varchar(255),
+    server varchar(255),
+    temperature int,
+    cpu int,
+    memory int,
+    primary key (id)
+);
