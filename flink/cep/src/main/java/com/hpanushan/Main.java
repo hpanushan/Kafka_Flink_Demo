@@ -37,7 +37,7 @@ public class Main {
         DataStream<Event> filterd = input.filter(new FilterFunction<Event>() {
             @Override
             public boolean filter(Event event) throws Exception {
-                return (event.getTemperature() > 95) || (event.getCpu() > 95) || (event.getMemory() > 95);
+                return (event.getTemperature() > 90) || (event.getCpu() > 95) || (event.getMemory() > 95);
             }
         });
 
